@@ -194,7 +194,7 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
                     List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
                     for(WifiConfiguration i : list){
                         //if(i.SSID != null && i.SSID != "<unknown ssid>" && i.SSID.equals("\"" + shipSSID + "\"")) {
-                            if(i.SSID != null && i.SSID != "<unknown ssid>" && i.SSID.equals(shipSSID)) {
+                            if(i.SSID.equals(shipSSID)) {
                             Log.d(LOG_TAG, "ALARM different SSID or no WiFI");
 //                            try {
 //                                Thread.sleep(1000);
@@ -243,7 +243,7 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
                     List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
                     for(WifiConfiguration i : list){
                         //if(i.SSID != null && i.SSID != "<unknown ssid>" && i.SSID.equals("\"" + shipSSID + "\"")) {
-                        if(i.SSID != null && i.SSID != "<unknown ssid>" && i.SSID.equals(shipSSID)) {
+                        if(i.SSID != null && i.SSID != "<unknown ssid>") {
                             Log.d(LOG_TAG, "ALARM no WiFI");
 //                            try {
 //                                Thread.sleep(1000);
