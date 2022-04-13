@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PacketSended extends Thread{
     private static final String LOG_TAG = PacketSended.class.getSimpleName();
-    private String IP_BUVO = "230.0.30.30";
+    private String IP_BUVO = "10.168.2.5";
     //private InetAddress adrOfServ;
     //private DatagramSocket senderSocket = new DatagramSocket();
     private byte[] bytesMac;
