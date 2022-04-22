@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.sql.Time;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,15 +27,15 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
 
     private final String LOG_TAG = CheckWiFiSSID_State.class.getSimpleName();
     private String CurrentSSID = null;
-    private String shipSSID = "20380";
+    private String shipSSID = "\"20380\"";
     private WifiManager wifiManager;
     private WifiInfo wifiInfo;
     private PacketSended packetSender = new PacketSended();
     private boolean Wifi_Status = true;
     private PacketSended packetSendedStatus;
     protected WifiManager.WifiLock wifiLock;
-    protected PowerManager powerManager;
     protected PowerManager.WakeLock wakeLock;
+    protected PowerManager powerManager;
     protected Context context4Locker;
     static AtomicInteger wifistatus = new AtomicInteger(1);
 
@@ -55,11 +56,6 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
             int netType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, -1);
             if (ConnectivityManager.TYPE_WIFI == netType) {
                 NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-
-                //Wifi never sleep
-                ContentResolver contentResolver = context.getContentResolver();
-                int set = Settings.System.WIFI_SLEEP_POLICY_NEVER;
-                android.provider.Settings.System.putInt(contentResolver, android.provider.Settings.System.WIFI_SLEEP_POLICY, set);
 
 
                 if (networkInfo.isConnected()) {
@@ -92,7 +88,7 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
                             locker(context, wifiManager);
                             Log.d(LOG_TAG, "WiFi and power locked");
                         }
-                    }   catch (Exception e){
+                    } catch (Exception e) {
                         Log.d(LOG_TAG, "No WiFi connection");
                     }
 
@@ -105,8 +101,6 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
         }
         Log.d(LOG_TAG, "RunReceiverAndSendPackage onReceive finish");
     }
-
-
 
 
     void locker(Context context, WifiManager wifiManager) {
@@ -135,8 +129,6 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
             } catch (NullPointerException e) {
                 Log.d(LOG_TAG, "Nothing to bring");
             }
-
-            int counter = 0;
 
 //            if (wifistatus == 1){
 //                try {
@@ -176,21 +168,13 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
 //                }
 //            }
 
-
-            if (ActivityCompat.checkSelfPermission(context4Locker, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            try {
+/*            try {
                 Log.d(LOG_TAG, "Trying reconnect to ship net. SSID, enter");
-                while (CurrentSSID != shipSSID) {
-                    Log.d(LOG_TAG, "CurrentSSID != shipSSID");
+                if (CurrentSSID != shipSSID) {
+                    Log.d(LOG_TAG, "CurrentSSID = " + CurrentSSID);
+                    Log.d(LOG_TAG, "shipSSID    = " + shipSSID);
+                    int counter1 = 0;
+                    Log.d(LOG_TAG, "CurrentSSID != shipSSID PIZDEC KAK" + counter1);
                     List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
                     for(WifiConfiguration i : list){
                         //if(i.SSID != null && i.SSID != "<unknown ssid>" && i.SSID.equals("\"" + shipSSID + "\"")) {
@@ -205,7 +189,7 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
 //                                Log.d(LOG_TAG, "WiFI enable");
 //                                wifiManager.setWifiEnabled(true);
 //                            }
-                            wifiManager.disconnect();
+                            //wifiManager.disconnect();
                             Log.d(LOG_TAG, "Disconnect is ____ " + wifiManager.disconnect());
                             wifiManager.enableNetwork(i.networkId, true);
                             try {
@@ -229,8 +213,10 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
                             }
                         }
                     }
+                    counter1++;
                 }
                 Log.d(LOG_TAG, "Trying reconnect to ship net SSID, ended");
+
             }catch (Exception e){
                 Log.d(LOG_TAG, "No WiFi connection");
             }
@@ -238,24 +224,26 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
 
             try {
                 Log.d(LOG_TAG, "Trying reconnect to ship net SSID, enter");
-                while (CurrentSSID == "<unknown ssid>" || CurrentSSID == null) {
+                if (CurrentSSID == "<unknown ssid>" || CurrentSSID == null) {
                     Log.d(LOG_TAG, "CurrentSSID == \"<unknown ssid>\" || CurrentSSID == null");
                     List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
                     for(WifiConfiguration i : list){
                         //if(i.SSID != null && i.SSID != "<unknown ssid>" && i.SSID.equals("\"" + shipSSID + "\"")) {
-                        if(i.SSID != null && i.SSID != "<unknown ssid>") {
+                        //if(i.SSID != null && i.SSID != "<unknown ssid>")
+                        {
                             Log.d(LOG_TAG, "ALARM no WiFI");
-//                            try {
-//                                Thread.sleep(1000);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//                            if(wifiManager.setWifiEnabled(false)){
-//                                Log.d(LOG_TAG, "WiFI enable");
-//                                wifiManager.setWifiEnabled(true);
-//                            }
-                            //wifiManager.disconnect();
-                            //Log.d(LOG_TAG, "Disconnect is ____ " + wifiManager.disconnect());
+                            *//*
+                            try { Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if(wifiManager.setWifiEnabled(false)){
+                                Log.d(LOG_TAG, "WiFI enable");
+                                wifiManager.setWifiEnabled(true);
+                            }
+                            ifiManager.disconnect();
+                            *//*
+                            Log.d(LOG_TAG, "Disconnect is ____ " + wifiManager.disconnect());
                             wifiManager.enableNetwork(i.networkId, true);
                             try {
                                 Thread.sleep(6000);
@@ -282,8 +270,57 @@ public class CheckWiFiSSID_State extends BroadcastReceiver {
                 Log.d(LOG_TAG, "Trying reconnect to ship net SSID, ended");
             } catch (Exception e){
                 Log.d(LOG_TAG, "Trying reconnect to ship net SSID, ended");
-            }
+            }*/
 
+            try {
+                Log.d(LOG_TAG, "Trying reconnect to 20380");
+                Log.d(LOG_TAG, "CurrentSSID = " + CurrentSSID);
+                while (CurrentSSID.equals("<unknown ssid>")) {
+                    if (ActivityCompat.checkSelfPermission(context4Locker, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    List<WifiConfiguration> listOfWifiConf = wifiManager.getConfiguredNetworks();
+                    Log.d(LOG_TAG, "CurrentSSID = " + CurrentSSID);
+                    Log.d(LOG_TAG, "shipSSID    = " + shipSSID);
+                    for(WifiConfiguration i : listOfWifiConf){
+                        Log.d(LOG_TAG, "Getting WifiConfiguration");
+                        while(i.SSID != null && i.SSID.equals(shipSSID)){
+                            Log.d(LOG_TAG, "enter to while(i.SSID != null && i.SSID.equals(shipSSID))");
+                            wifiManager.disconnect();
+                            wifiManager.enableNetwork(i.networkId, true);
+                            wifiManager.reconnect();
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+//                            break;
+                            Log.d(LOG_TAG, "exit from while(i.SSID != null && i.SSID.equals(shipSSID))");
+                        }
+                        Log.d(LOG_TAG, "Getting WifiConfiguration ended");
+                    }
+
+                    Log.d(LOG_TAG, "reconnect");
+                    Log.d(LOG_TAG, "Reconnect is _____" + wifiManager.reconnect());
+                }
+
+                Log.d(LOG_TAG, "Trying reconnect to ship net SSID, ended");
+
+            } catch (Exception e) {
+                Log.d(LOG_TAG, "No WiFi connection");
+            }
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         }
     }

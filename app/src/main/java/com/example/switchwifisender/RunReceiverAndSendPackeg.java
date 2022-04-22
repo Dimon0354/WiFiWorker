@@ -3,25 +3,20 @@ package com.example.switchwifisender;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import java.net.SocketException;
 import java.util.Timer;
@@ -39,6 +34,10 @@ public class RunReceiverAndSendPackeg extends Service {
     private TimerTask timerTask;
     private PacketSended packetSender = new PacketSended();
 
+    private String ContentTitle = "Сервис удержания WiFi";
+    private String ContentText = "Во избежание неполадок - не закрывать!";
+
+
     public RunReceiverAndSendPackeg() throws SocketException {
     }
 
@@ -47,7 +46,9 @@ public class RunReceiverAndSendPackeg extends Service {
         Log.d(LOG_TAG, "RunReceiverAndSendPackeg service created");
         super.onCreate();
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            startMyOwnForeground();
+            startNotification_O();
+        } else {
+            startNotification_N();
         }
         packetSender.start();
 //        } else {
@@ -98,7 +99,7 @@ public class RunReceiverAndSendPackeg extends Service {
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void startMyOwnForeground(){
+    public void startNotification_O(){
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
         channel.setLightColor(Color.RED);
         channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
@@ -109,13 +110,27 @@ public class RunReceiverAndSendPackeg extends Service {
 
         NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         Notification notification = notifBuilder.setOngoing(true)
-                .setContentTitle("Сервис удержания WiFi")
-                .setContentText("Во избежание неполадок - не закрывать!")
+                .setContentTitle(ContentTitle)
+                .setContentText(ContentText)
                 .setPriority(NotificationManager.IMPORTANCE_HIGH)
                 .setCategory(Notification.CATEGORY_SERVICE)
+                .setSmallIcon(R.drawable.ic_launcher_background)
                 .build();
         startForeground(1, notification);
 
+    }
+
+    public void startNotification_N(){
+
+        Notification notification = new Notification.Builder(this)
+                .setContentTitle(ContentTitle)
+                .setContentText(ContentText)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .build();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(0, notification);
     }
 
 

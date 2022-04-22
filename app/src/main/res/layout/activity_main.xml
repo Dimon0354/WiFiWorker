@@ -8,19 +8,18 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
         android:layout_gravity="center"
         android:layout_marginTop="200dp"
-        android:text="Переключить для работы"
+        android:text="Как ты сюда попал? Не важно, уходи, тут все равно ничего нет"
         />
 
-    <Switch
+    <ScrollView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_gravity="center"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:checked="false"
-        android:id="@+id/switch_prog"
+        android:id="@+id/log_viewer"
         />
 
 </LinearLayout>
