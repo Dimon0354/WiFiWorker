@@ -28,14 +28,14 @@ public class RunReceiverAndSendPackeg extends Service {
     private CheckWiFiSSID_State checkWiFiSSID_state = new CheckWiFiSSID_State();
     public static final String CHANNEL_ID = "#123";
     public static final String CHANNEL_NAME = "my notification";
-    public static final String CHANNEL_DESCRIPTION = "Test";
     private int counter = 0;
     private Timer timer;
     private TimerTask timerTask;
     private PacketSended packetSender = new PacketSended();
+    private WiFiWakeKeeper mWiFiWakeKeeper;
 
-    private String ContentTitle = "Сервис удержания WiFi";
-    private String ContentText = "Во избежание неполадок - не закрывать!";
+    private final String ContentTitle = "Сервис удержания WiFi";
+    private final String ContentText = "Во избежание неполадок - не закрывать!";
 
 
     public RunReceiverAndSendPackeg() throws SocketException {
@@ -51,11 +51,8 @@ public class RunReceiverAndSendPackeg extends Service {
             startNotification_N();
         }
         packetSender.start();
-//        } else {
-//            startMyOwnForeground(1, new Notification());
-//        }
 
-
+        this.mWiFiWakeKeeper = new WiFiWakeKeeper(this, "WiFiKeeper");
     }
 
     @Override
@@ -73,10 +70,10 @@ public class RunReceiverAndSendPackeg extends Service {
             registerReceiver(checkWiFiSSID_state, brIntentFilter);
         }
         Log.d(LOG_TAG, "CheckWiFiSSID_State receiver created");
-
-
-
         Log.d(LOG_TAG, "onStartCommand finish");
+        if(!mWiFiWakeKeeper.isLocking()){
+            mWiFiWakeKeeper.lock();
+        }
         return START_STICKY;
     }
 
@@ -87,6 +84,7 @@ public class RunReceiverAndSendPackeg extends Service {
         Intent broadcastreceiver = new Intent(this, RunServiceMore.class);
         sendBroadcast(broadcastreceiver);
         stopTimer();
+        this.mWiFiWakeKeeper.release();
         super.onDestroy();
     }
 
